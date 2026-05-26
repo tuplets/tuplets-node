@@ -1,0 +1,32 @@
+export { TupletsClient, type TupletsClientOptions } from "./client";
+export {
+  APIStatusError,
+  AuthenticationError,
+  ConflictError,
+  GoneError,
+  NotFoundError,
+  PaymentRequiredError,
+  PermissionDeniedError,
+  RateLimitError,
+  RequestTimeoutError,
+  TupletsError,
+  ValidationError,
+  WaitTimeoutError,
+} from "./errors";
+export type {
+  BinaryPayload,
+  BrowserUploadTarget,
+  CreateUploadTargetParams,
+  InsightsTier,
+  JobAccepted,
+  JobCreateParams,
+  JobList,
+  JobState,
+  JobStatus,
+  JsonObject,
+  SolutionsInquiryRequest,
+  SolutionsInquirySubmission,
+  TranscriptionModel,
+  UploadedAudioReference,
+  WaitOptions,
+} from "./models";
