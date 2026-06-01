@@ -41,6 +41,36 @@ describe("TupletsClient", () => {
     expect(job.statusUrl).toBe("https://api.tuplets.ai/jobs/job_123");
   });
 
+    it("creates a job with analytics JSON in form fields", async () => {
+    const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const request = new Request(input, init);
+      const form = await request.formData();
+      const analytics = JSON.parse(String(form.get("analytics")));
+
+      expect(analytics).toEqual({
+        profile: "full",
+        domain: "insurance",
+      });
+
+      return jsonResponse(201, {
+        status: "accepted",
+        id: "job_456",
+        status_url: "https://api.tuplets.ai/jobs/job_456",
+        cancel_url: "https://api.tuplets.ai/jobs/job_456",
+        cancel_token: "cancel_456",
+      });
+    });
+
+    const client = new TupletsClient({ apiKey: "tb_test_key", fetch: fetchMock });
+
+    const job = await client.jobs.createFromUrl("https://storage.example.com/call.wav", {
+      analytics: { profile: "full", domain: "insurance" },
+    });
+
+    expect(job.id).toBe("job_456");
+  });
+
+
   it("wait polls until completion", async () => {
     const responses = [
       jsonResponse(200, {

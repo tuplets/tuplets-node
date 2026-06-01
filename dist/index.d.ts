@@ -32,9 +32,17 @@ type JobState = "queued" | "running" | "completed" | "failed";
 type InsightsTier = "fast" | "deep";
 type JsonObject = Record<string, unknown>;
 type BinaryPayload = Blob | ArrayBuffer | ArrayBufferView;
+/**
+ * Parameters for job submission.
+ *
+ * When `diarization` is `true`, speaker attribution is treated as a required
+ * outcome. Jobs can finish as `failed` if usable diarization cannot be
+ * produced.
+ */
 interface JobCreateParams {
     language?: string;
     transcriptionModel?: TranscriptionModel;
+    /** Enable speaker diarization. Diarized jobs can fail if speaker attribution cannot be produced. */
     diarization?: boolean;
     piiProcessing?: boolean;
     insights?: boolean;
@@ -65,9 +73,16 @@ interface BrowserUploadTarget {
     uploadToken: string;
     expiresInSeconds: number;
 }
+/**
+ * Normalized job status returned by the API.
+ *
+ * `result` is populated only for completed jobs. When `diarization` is
+ * enabled, failed speaker attribution leaves `result` as `null` and surfaces
+ * the failure detail through `errorMessage`.
+ */
 interface JobStatus {
     id: string;
-    status: string;
+    status: JobState;
     result: JsonObject | null;
     errorMessage: string | null;
     audioDurationSeconds: number | null;
@@ -97,21 +112,6 @@ interface JobList {
     totalItems: number;
     statusFilter: string | null;
 }
-interface SolutionsInquiryRequest {
-    companyName: string;
-    contactEmail: string;
-    role: string;
-    projectType: string;
-    budgetRange: string;
-    audioHoursOfProcessing: string;
-    requirements: string;
-}
-interface SolutionsInquirySubmission {
-    status: string;
-    message: string;
-    inquiryId: string;
-    submittedAt: string;
-}
 interface WaitOptions {
     pollIntervalMs?: number;
     timeoutMs?: number;
@@ -135,12 +135,6 @@ declare class JobsResource {
     wait(jobId: string, options?: WaitOptions): Promise<JobStatus>;
 }
 
-declare class SolutionsResource {
-    private readonly http;
-    constructor(http: HTTPClient);
-    createInquiry(request: SolutionsInquiryRequest): Promise<SolutionsInquirySubmission>;
-}
-
 declare class UploadsResource {
     private readonly http;
     constructor(http: HTTPClient);
@@ -155,7 +149,6 @@ declare class TupletsClient {
     private readonly http;
     readonly jobs: JobsResource;
     readonly uploads: UploadsResource;
-    readonly solutions: SolutionsResource;
     constructor(options: TupletsClientOptions);
 }
 
@@ -188,4 +181,4 @@ declare class RequestTimeoutError extends TupletsError {
 declare class WaitTimeoutError extends TupletsError {
 }
 
-export { APIStatusError, AuthenticationError, type BinaryPayload, type BrowserUploadTarget, ConflictError, type CreateUploadTargetParams, GoneError, type InsightsTier, type JobAccepted, type JobCreateParams, type JobList, type JobState, type JobStatus, type JsonObject, NotFoundError, PaymentRequiredError, PermissionDeniedError, RateLimitError, RequestTimeoutError, type SolutionsInquiryRequest, type SolutionsInquirySubmission, type TranscriptionModel, TupletsClient, type TupletsClientOptions, TupletsError, type UploadedAudioReference, ValidationError, type WaitOptions, WaitTimeoutError };
+export { APIStatusError, AuthenticationError, type BinaryPayload, type BrowserUploadTarget, ConflictError, type CreateUploadTargetParams, GoneError, type InsightsTier, type JobAccepted, type JobCreateParams, type JobList, type JobState, type JobStatus, type JsonObject, NotFoundError, PaymentRequiredError, PermissionDeniedError, RateLimitError, RequestTimeoutError, type TranscriptionModel, TupletsClient, type TupletsClientOptions, TupletsError, type UploadedAudioReference, ValidationError, type WaitOptions, WaitTimeoutError };

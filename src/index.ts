@@ -24,8 +24,6 @@ export type {
   JobState,
   JobStatus,
   JsonObject,
-  SolutionsInquiryRequest,
-  SolutionsInquirySubmission,
   TranscriptionModel,
   UploadedAudioReference,
   WaitOptions,

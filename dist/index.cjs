@@ -140,17 +140,6 @@ function appendJobCreateParams(form, params = {}) {
   form.append("insights_fast", boolToApi(params.insightsFast));
   form.append("insights_deep", boolToApi(params.insightsDeep));
 }
-function serializeSolutionsInquiry(request) {
-  return {
-    company_name: request.companyName,
-    contact_email: request.contactEmail,
-    role: request.role,
-    project_type: request.projectType,
-    budget_range: request.budgetRange,
-    audio_hours_of_processing: request.audioHoursOfProcessing,
-    requirements: request.requirements
-  };
-}
 function mapJobAccepted(payload) {
   return {
     status: "accepted",
@@ -204,14 +193,6 @@ function mapJobList(payload) {
     items: Array.isArray(payload.items) ? payload.items.map((item) => mapJobStatus(item)) : [],
     totalItems: Number(payload.total_items ?? 0),
     statusFilter: payload.status_filter ?? null
-  };
-}
-function mapSolutionsInquirySubmission(payload) {
-  return {
-    status: String(payload.status),
-    message: String(payload.message),
-    inquiryId: String(payload.inquiry_id),
-    submittedAt: String(payload.submitted_at)
   };
 }
 
@@ -390,26 +371,6 @@ var JobsResource = class {
   }
 };
 
-// src/resources/solutions.ts
-var SolutionsResource = class {
-  constructor(http) {
-    this.http = http;
-  }
-  http;
-  async createInquiry(request) {
-    const payload = await this.http.requestJson(
-      "POST",
-      "/solutions/inquiries",
-      {
-        authenticated: false,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(serializeSolutionsInquiry(request))
-      }
-    );
-    return mapSolutionsInquirySubmission(payload);
-  }
-};
-
 // src/resources/uploads.ts
 var import_promises2 = require("fs/promises");
 var import_node_path2 = require("path");
@@ -460,12 +421,10 @@ var TupletsClient = class {
   http;
   jobs;
   uploads;
-  solutions;
   constructor(options) {
     this.http = new HTTPClient(options);
     this.jobs = new JobsResource(this.http);
     this.uploads = new UploadsResource(this.http);
-    this.solutions = new SolutionsResource(this.http);
   }
 };
 // Annotate the CommonJS export names for ESM import in node:

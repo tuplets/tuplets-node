@@ -5,14 +5,23 @@ export type InsightsTier = "fast" | "deep";
 export type JsonObject = Record<string, unknown>;
 export type BinaryPayload = Blob | ArrayBuffer | ArrayBufferView;
 
+/**
+ * Parameters for job submission.
+ *
+ * When `diarization` is `true`, speaker attribution is treated as a required
+ * outcome. Jobs can finish as `failed` if usable diarization cannot be
+ * produced.
+ */
 export interface JobCreateParams {
   language?: string;
   transcriptionModel?: TranscriptionModel;
+  /** Enable speaker diarization. Diarized jobs can fail if speaker attribution cannot be produced. */
   diarization?: boolean;
   piiProcessing?: boolean;
   insights?: boolean;
   insightsFast?: boolean;
   insightsDeep?: boolean;
+  analytics?: JsonObject;
 }
 
 export interface UploadedAudioReference {
@@ -43,9 +52,16 @@ export interface BrowserUploadTarget {
   expiresInSeconds: number;
 }
 
+/**
+ * Normalized job status returned by the API.
+ *
+ * `result` is populated only for completed jobs. When `diarization` is
+ * enabled, failed speaker attribution leaves `result` as `null` and surfaces
+ * the failure detail through `errorMessage`.
+ */
 export interface JobStatus {
   id: string;
-  status: string;
+  status: JobState;
   result: JsonObject | null;
   errorMessage: string | null;
   audioDurationSeconds: number | null;
@@ -56,6 +72,7 @@ export interface JobStatus {
   insightsFast: boolean;
   insightsDeep: boolean;
   insightsTier: InsightsTier | null;
+  analytics: JsonObject | null;
   estimatedCostUsd: number | null;
   billedCostUsd: number | null;
   billingStatus: string | null;
@@ -75,23 +92,6 @@ export interface JobList {
   items: JobStatus[];
   totalItems: number;
   statusFilter: string | null;
-}
-
-export interface SolutionsInquiryRequest {
-  companyName: string;
-  contactEmail: string;
-  role: string;
-  projectType: string;
-  budgetRange: string;
-  audioHoursOfProcessing: string;
-  requirements: string;
-}
-
-export interface SolutionsInquirySubmission {
-  status: string;
-  message: string;
-  inquiryId: string;
-  submittedAt: string;
 }
 
 export interface WaitOptions {

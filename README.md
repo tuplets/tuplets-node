@@ -25,8 +25,12 @@ const finalJob = await client.jobs.wait(job.id);
 if (finalJob.status === "completed") {
   const transcript = await client.jobs.downloadResult(job.id);
   console.log(transcript.text);
+} else if (finalJob.status === "failed") {
+  console.error(finalJob.errorMessage);
 }
 ```
+
+When `diarization: true`, speaker attribution is treated as required. If the API cannot produce usable diarization, the job finishes as `failed` and `result` remains `null`.
 
 ## Direct Uploads
 
@@ -56,4 +60,3 @@ const job = await client.jobs.createFromUploadedAudio(
 
 - `client.jobs` for transcription job submission, polling, cancellation, and result download
 - `client.uploads` for signed browser/direct upload targets
-- `client.solutions` for public solutions inquiries
