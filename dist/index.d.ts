@@ -29,7 +29,6 @@ declare class HTTPClient {
 
 type TranscriptionModel = "standard" | "premium";
 type JobState = "queued" | "running" | "completed" | "failed";
-type InsightsTier = "fast" | "deep";
 type JsonObject = Record<string, unknown>;
 type BinaryPayload = Blob | ArrayBuffer | ArrayBufferView;
 /**
@@ -45,9 +44,7 @@ interface JobCreateParams {
     /** Enable speaker diarization. Diarized jobs can fail if speaker attribution cannot be produced. */
     diarization?: boolean;
     piiProcessing?: boolean;
-    insights?: boolean;
-    insightsFast?: boolean;
-    insightsDeep?: boolean;
+    analytics?: JsonObject;
 }
 interface UploadedAudioReference {
     objectKey: string;
@@ -89,10 +86,7 @@ interface JobStatus {
     transcriptionModel: TranscriptionModel;
     diarization: boolean;
     piiProcessing: boolean;
-    insights: boolean;
-    insightsFast: boolean;
-    insightsDeep: boolean;
-    insightsTier: InsightsTier | null;
+    analytics: JsonObject | null;
     estimatedCostUsd: number | null;
     billedCostUsd: number | null;
     billingStatus: string | null;
@@ -111,6 +105,21 @@ interface JobList {
     items: JobStatus[];
     totalItems: number;
     statusFilter: string | null;
+}
+interface SolutionsInquiryRequest {
+    companyName: string;
+    contactEmail: string;
+    role: string;
+    projectType: string;
+    budgetRange: string;
+    audioHoursOfProcessing: string;
+    requirements: string;
+}
+interface SolutionsInquirySubmission {
+    status: string;
+    message: string;
+    inquiryId: string;
+    submittedAt: string;
 }
 interface WaitOptions {
     pollIntervalMs?: number;
@@ -135,6 +144,12 @@ declare class JobsResource {
     wait(jobId: string, options?: WaitOptions): Promise<JobStatus>;
 }
 
+declare class SolutionsResource {
+    private readonly http;
+    constructor(http: HTTPClient);
+    createInquiry(request: SolutionsInquiryRequest): Promise<SolutionsInquirySubmission>;
+}
+
 declare class UploadsResource {
     private readonly http;
     constructor(http: HTTPClient);
@@ -149,6 +164,7 @@ declare class TupletsClient {
     private readonly http;
     readonly jobs: JobsResource;
     readonly uploads: UploadsResource;
+    readonly solutions: SolutionsResource;
     constructor(options: TupletsClientOptions);
 }
 
@@ -181,4 +197,4 @@ declare class RequestTimeoutError extends TupletsError {
 declare class WaitTimeoutError extends TupletsError {
 }
 
-export { APIStatusError, AuthenticationError, type BinaryPayload, type BrowserUploadTarget, ConflictError, type CreateUploadTargetParams, GoneError, type InsightsTier, type JobAccepted, type JobCreateParams, type JobList, type JobState, type JobStatus, type JsonObject, NotFoundError, PaymentRequiredError, PermissionDeniedError, RateLimitError, RequestTimeoutError, type TranscriptionModel, TupletsClient, type TupletsClientOptions, TupletsError, type UploadedAudioReference, ValidationError, type WaitOptions, WaitTimeoutError };
+export { APIStatusError, AuthenticationError, type BinaryPayload, type BrowserUploadTarget, ConflictError, type CreateUploadTargetParams, GoneError, type JobAccepted, type JobCreateParams, type JobList, type JobState, type JobStatus, type JsonObject, NotFoundError, PaymentRequiredError, PermissionDeniedError, RateLimitError, RequestTimeoutError, type SolutionsInquiryRequest, type SolutionsInquirySubmission, type TranscriptionModel, TupletsClient, type TupletsClientOptions, TupletsError, type UploadedAudioReference, ValidationError, type WaitOptions, WaitTimeoutError };

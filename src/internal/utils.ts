@@ -6,6 +6,8 @@ import type {
   JobList,
   JobStatus,
   JsonObject,
+  SolutionsInquiryRequest,
+  SolutionsInquirySubmission,
 } from "../models";
 
 export const SDK_VERSION = "0.1.0";
@@ -65,12 +67,23 @@ export function appendJobCreateParams(form: FormData, params: JobCreateParams = 
   form.append("transcription_model", params.transcriptionModel ?? "standard");
   form.append("diarization", boolToApi(params.diarization));
   form.append("pii_processing", boolToApi(params.piiProcessing));
-  form.append("insights", boolToApi(params.insights));
-  form.append("insights_fast", boolToApi(params.insightsFast));
-  form.append("insights_deep", boolToApi(params.insightsDeep));
   if (params.analytics !== undefined) {
     form.append("analytics", JSON.stringify(params.analytics));
   }
+}
+
+export function serializeSolutionsInquiry(
+  request: SolutionsInquiryRequest,
+): Record<string, string> {
+  return {
+    company_name: request.companyName,
+    contact_email: request.contactEmail,
+    role: request.role,
+    project_type: request.projectType,
+    budget_range: request.budgetRange,
+    audio_hours_of_processing: request.audioHoursOfProcessing,
+    requirements: request.requirements,
+  };
 }
 
 export function mapJobAccepted(payload: Record<string, unknown>): JobAccepted {
@@ -107,10 +120,6 @@ export function mapJobStatus(payload: Record<string, unknown>): JobStatus {
     transcriptionModel: (payload.transcription_model as JobStatus["transcriptionModel"]) ?? "standard",
     diarization: Boolean(payload.diarization),
     piiProcessing: Boolean(payload.pii_processing),
-    insights: Boolean(payload.insights),
-    insightsFast: Boolean(payload.insights_fast),
-    insightsDeep: Boolean(payload.insights_deep),
-    insightsTier: (payload.insights_tier as JobStatus["insightsTier"]) ?? null,
     analytics:
       payload.analytics != null && typeof payload.analytics === "object" && !Array.isArray(payload.analytics)
         ? (payload.analytics as JsonObject)
@@ -146,3 +155,13 @@ export function mapJobList(payload: Record<string, unknown>): JobList {
   };
 }
 
+export function mapSolutionsInquirySubmission(
+  payload: Record<string, unknown>,
+): SolutionsInquirySubmission {
+  return {
+    status: String(payload.status),
+    message: String(payload.message),
+    inquiryId: String(payload.inquiry_id),
+    submittedAt: String(payload.submitted_at),
+  };
+}

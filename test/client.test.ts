@@ -41,7 +41,7 @@ describe("TupletsClient", () => {
     expect(job.statusUrl).toBe("https://api.tuplets.ai/jobs/job_123");
   });
 
-    it("creates a job with analytics JSON in form fields", async () => {
+  it("creates a job with analytics JSON in form fields", async () => {
     const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
       const request = new Request(input, init);
       const form = await request.formData();
@@ -70,7 +70,6 @@ describe("TupletsClient", () => {
     expect(job.id).toBe("job_456");
   });
 
-
   it("wait polls until completion", async () => {
     const responses = [
       jsonResponse(200, {
@@ -82,10 +81,6 @@ describe("TupletsClient", () => {
         transcription_model: "standard",
         diarization: false,
         pii_processing: false,
-        insights: false,
-        insights_fast: false,
-        insights_deep: false,
-        insights_tier: null,
         estimated_cost_usd: 0.1,
         billed_cost_usd: null,
         billing_status: "pending",
@@ -109,10 +104,6 @@ describe("TupletsClient", () => {
         transcription_model: "standard",
         diarization: false,
         pii_processing: false,
-        insights: false,
-        insights_fast: false,
-        insights_deep: false,
-        insights_tier: null,
         estimated_cost_usd: 0.1,
         billed_cost_usd: 0.1,
         billing_status: "billed",

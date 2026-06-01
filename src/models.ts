@@ -1,6 +1,5 @@
 export type TranscriptionModel = "standard" | "premium";
 export type JobState = "queued" | "running" | "completed" | "failed";
-export type InsightsTier = "fast" | "deep";
 
 export type JsonObject = Record<string, unknown>;
 export type BinaryPayload = Blob | ArrayBuffer | ArrayBufferView;
@@ -18,9 +17,6 @@ export interface JobCreateParams {
   /** Enable speaker diarization. Diarized jobs can fail if speaker attribution cannot be produced. */
   diarization?: boolean;
   piiProcessing?: boolean;
-  insights?: boolean;
-  insightsFast?: boolean;
-  insightsDeep?: boolean;
   analytics?: JsonObject;
 }
 
@@ -68,10 +64,6 @@ export interface JobStatus {
   transcriptionModel: TranscriptionModel;
   diarization: boolean;
   piiProcessing: boolean;
-  insights: boolean;
-  insightsFast: boolean;
-  insightsDeep: boolean;
-  insightsTier: InsightsTier | null;
   analytics: JsonObject | null;
   estimatedCostUsd: number | null;
   billedCostUsd: number | null;
@@ -92,6 +84,23 @@ export interface JobList {
   items: JobStatus[];
   totalItems: number;
   statusFilter: string | null;
+}
+
+export interface SolutionsInquiryRequest {
+  companyName: string;
+  contactEmail: string;
+  role: string;
+  projectType: string;
+  budgetRange: string;
+  audioHoursOfProcessing: string;
+  requirements: string;
+}
+
+export interface SolutionsInquirySubmission {
+  status: string;
+  message: string;
+  inquiryId: string;
+  submittedAt: string;
 }
 
 export interface WaitOptions {

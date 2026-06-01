@@ -1,8 +1,24 @@
 {
   "name": "@tupletsai/sdk",
-  "version": "0.2.0",
-  "description": "Official TypeScript SDK for the Tuplets API",
+  "version": "0.3.0",
+  "description": "Official TypeScript SDK for the Tuplets transcription API — submit jobs, poll results, direct uploads, diarization, PII redaction, and analytics.",
   "license": "UNLICENSED",
+  "homepage": "https://tuplets.ai/docs",
+  "bugs": {
+    "url": "https://tuplets.ai",
+    "email": "contact@tuplets.ai"
+  },
+  "keywords": [
+    "tuplets",
+    "transcription",
+    "speech-to-text",
+    "audio",
+    "diarization",
+    "pii",
+    "analytics",
+    "sdk",
+    "typescript"
+  ],
   "type": "module",
   "sideEffects": false,
   "main": "./dist/index.cjs",

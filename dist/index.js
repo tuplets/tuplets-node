@@ -98,9 +98,20 @@ function appendJobCreateParams(form, params = {}) {
   form.append("transcription_model", params.transcriptionModel ?? "standard");
   form.append("diarization", boolToApi(params.diarization));
   form.append("pii_processing", boolToApi(params.piiProcessing));
-  form.append("insights", boolToApi(params.insights));
-  form.append("insights_fast", boolToApi(params.insightsFast));
-  form.append("insights_deep", boolToApi(params.insightsDeep));
+  if (params.analytics !== void 0) {
+    form.append("analytics", JSON.stringify(params.analytics));
+  }
+}
+function serializeSolutionsInquiry(request) {
+  return {
+    company_name: request.companyName,
+    contact_email: request.contactEmail,
+    role: request.role,
+    project_type: request.projectType,
+    budget_range: request.budgetRange,
+    audio_hours_of_processing: request.audioHoursOfProcessing,
+    requirements: request.requirements
+  };
 }
 function mapJobAccepted(payload) {
   return {
@@ -131,10 +142,7 @@ function mapJobStatus(payload) {
     transcriptionModel: payload.transcription_model ?? "standard",
     diarization: Boolean(payload.diarization),
     piiProcessing: Boolean(payload.pii_processing),
-    insights: Boolean(payload.insights),
-    insightsFast: Boolean(payload.insights_fast),
-    insightsDeep: Boolean(payload.insights_deep),
-    insightsTier: payload.insights_tier ?? null,
+    analytics: payload.analytics != null && typeof payload.analytics === "object" && !Array.isArray(payload.analytics) ? payload.analytics : null,
     estimatedCostUsd: payload.estimated_cost_usd == null ? null : Number(payload.estimated_cost_usd),
     billedCostUsd: payload.billed_cost_usd == null ? null : Number(payload.billed_cost_usd),
     billingStatus: payload.billing_status ?? null,
@@ -155,6 +163,14 @@ function mapJobList(payload) {
     items: Array.isArray(payload.items) ? payload.items.map((item) => mapJobStatus(item)) : [],
     totalItems: Number(payload.total_items ?? 0),
     statusFilter: payload.status_filter ?? null
+  };
+}
+function mapSolutionsInquirySubmission(payload) {
+  return {
+    status: String(payload.status),
+    message: String(payload.message),
+    inquiryId: String(payload.inquiry_id),
+    submittedAt: String(payload.submitted_at)
   };
 }
 
@@ -333,6 +349,26 @@ var JobsResource = class {
   }
 };
 
+// src/resources/solutions.ts
+var SolutionsResource = class {
+  constructor(http) {
+    this.http = http;
+  }
+  http;
+  async createInquiry(request) {
+    const payload = await this.http.requestJson(
+      "POST",
+      "/solutions/inquiries",
+      {
+        authenticated: false,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(serializeSolutionsInquiry(request))
+      }
+    );
+    return mapSolutionsInquirySubmission(payload);
+  }
+};
+
 // src/resources/uploads.ts
 import { readFile as readFile2 } from "fs/promises";
 import { basename as basename2 } from "path";
@@ -383,10 +419,12 @@ var TupletsClient = class {
   http;
   jobs;
   uploads;
+  solutions;
   constructor(options) {
     this.http = new HTTPClient(options);
     this.jobs = new JobsResource(this.http);
     this.uploads = new UploadsResource(this.http);
+    this.solutions = new SolutionsResource(this.http);
   }
 };
 export {
