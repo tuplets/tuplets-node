@@ -1,6 +1,6 @@
 {
   "name": "@tupletsai/sdk",
-  "version": "0.3.0",
+  "version": "0.3.2",
   "description": "Official TypeScript SDK for the Tuplets transcription API — submit jobs, poll results, direct uploads, diarization, PII redaction, and analytics.",
   "license": "UNLICENSED",
   "homepage": "https://tuplets.ai/docs",
