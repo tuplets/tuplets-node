@@ -17,6 +17,7 @@ export type {
   BinaryPayload,
   BrowserUploadTarget,
   CreateUploadTargetParams,
+  FeatureExecution,
   JobAccepted,
   JobCreateParams,
   JobList,

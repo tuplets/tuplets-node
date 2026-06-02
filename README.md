@@ -180,6 +180,8 @@ for (const segment of (transcript.segments as Array<Record<string, unknown>>) ??
 
 When `diarization: true`, segments include speaker labels. Completed jobs may also include an `analytics` object if analytics were requested.
 
+Downloaded JSON includes `feature_execution.transcription_model_requested` and `feature_execution.transcription_model_applied` so archived result files record whether `standard` or `premium` transcription ran.
+
 ### List and cancel jobs
 
 ```ts
@@ -302,6 +304,7 @@ The package exports typed models for requests and responses:
 
 ```ts
 import type {
+  FeatureExecution,
   JobCreateParams,
   JobAccepted,
   JobStatus,
@@ -314,7 +317,7 @@ import type {
 } from "@tupletsai/sdk";
 ```
 
-Field names follow camelCase in TypeScript (e.g. `transcriptionModel`, `piiProcessing`) and map to the API's snake_case form fields automatically.
+Field names follow camelCase in TypeScript (e.g. `transcriptionModel`, `piiProcessing`) and map to the API's snake_case form fields automatically. Nested result payloads such as `feature_execution` keep the API's snake_case keys; use the `FeatureExecution` type when reading downloaded transcript JSON.
 
 ## API surface
 

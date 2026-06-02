@@ -4,6 +4,35 @@ export type JobState = "queued" | "running" | "completed" | "failed";
 export type JsonObject = Record<string, unknown>;
 export type BinaryPayload = Blob | ArrayBuffer | ArrayBufferView;
 
+/** Execution metadata nested under completed job results (`result.feature_execution`). */
+export interface FeatureExecution {
+  transcription_requested?: boolean;
+  transcription_applied?: boolean;
+  transcription_model_requested?: TranscriptionModel;
+  transcription_model_applied?: TranscriptionModel | null;
+  transcription_elapsed_seconds?: number;
+  diarization_requested?: boolean;
+  diarization_applied?: boolean;
+  diarization_elapsed_seconds?: number;
+  pii_processing_requested?: boolean;
+  pii_processing_applied?: boolean;
+  pii_processing_elapsed_seconds?: number;
+  pii_processing_language?: string;
+  pii_processing_skip_reason?: string;
+  generic_analytics_requested?: boolean;
+  generic_analytics_tier_requested?: string | null;
+  generic_analytics_applied?: boolean;
+  generic_analytics_tier_applied?: string | null;
+  generic_analytics_elapsed_seconds?: number;
+  analytics_requested?: boolean;
+  analytics_profile_requested?: string | null;
+  analytics_applied?: boolean;
+  analytics_elapsed_seconds?: number;
+  custom_analytics_requested?: boolean;
+  custom_analytics_applied?: boolean;
+  custom_analytics_elapsed_seconds?: number;
+}
+
 /**
  * Parameters for job submission.
  *
